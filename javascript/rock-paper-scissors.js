@@ -4,7 +4,7 @@
 /*                                                                           */
 /*  Rock Paper Scissors                                                      */
 /*                                                                           */
-/*  This program plays rock paper scissors with a user byt getting a random  */
+/*  This program plays rock paper scissors with a user by getting a random   */
 /*  choice for the computer and comparing it to the user's choice.           */
 /*                                                                           */
 /*****************************************************************************/
@@ -21,7 +21,6 @@ function computerPlay() {
 function playRound(playerSelection, computerSelection) {
 
     let winner = ["", 0];
-
 
     if (playerSelection === computerSelection) {
         winner[0]= "It was a tie :/ Try again.";
@@ -56,51 +55,75 @@ function playRound(playerSelection, computerSelection) {
             winner[1] = 1;
         }
     }
-
+    console.log(winner);
     return winner;
 }
 
-/* Gets the player's choice and returns the first character                  */
-function getPlayerSelection() {
-    let playerSelection;
+const buttons = document.querySelector('.playerChoice').querySelectorAll('button');
+const score = document.querySelector('#score');
 
-    playerSelection = prompt("Choose Rock, Paper, or Scissors:");
+var gameOver = false;
+playerScore = 0;
+computerScore = 0;
 
-    return playerSelection.charAt(0).toUpperCase();
+const playerScoreP = document.querySelector('#playerScore');
+const computerScoreP = document.querySelector('#computerScore');
+const result = document.querySelector('#result');
+
+function setScore (playerScore, computerScore) {
+
+    score.removeChild(playerScoreP);
+    score.removeChild(computerScoreP);
+
+    playerScoreP.textContent = "Player: " + playerScore;
+    computerScoreP.textContent = "Computer: " + computerScore;
+
+    score.appendChild(playerScoreP);
+    score.appendChild(computerScoreP);
 }
 
-let score = [0, 0];
+function displayText(text) {
 
-/* plays 5 rounds of Rock, Paper, Scissors with the computer                 */
-function game() {
-    for (let i = 1; i <= 5; i++) {
-        //Store player(score[0]) and computer(score[1]) scores
+    score.removeChild(result);
 
-        let playerSelection = getPlayerSelection();
-        let computerSelection = computerPlay();
+    console.log(playerScore);
+    console.log(computerScore);
 
-        let winner = playRound(playerSelection, computerSelection);
-
-        if (winner[1] === 1) {
-            score[0]++;
-        }
-        else if (winner[1] === 2) {
-            score[1]++;
-        }
-
-        console.log(winner[0]);
-        console.log("You: " + score[0] + "\nComputer: " + score[1]);
+    if (playerScore < 5 && computerScore < 5) {
+        result.textContent = text;
+    }
+    else if (playerScore === 5) {
+        gameOver = true;
+        result.textContent = "You win the game!";
+    }
+    else if (computerScore === 5){
+        gameOver = true;
+        result.textContent = "You lose the game :( better luck next time."
     }
 
-    if (score[0] > score[1]) {
-        console.log("You win the game!");
-    }
-    else if (score[0] < score[1]) {
-        console.log("You lost the game :(");
-    }
-    else {
-        console.log("It was a tie :/");
-    }
+
+    score.appendChild(result);
 }
 
-game();
+    buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        let winner = playRound(button.id.charAt(0), computerPlay());
+
+        if (!gameOver){
+            if (winner[1] === 1) {
+                playerScore++;
+            }
+            else if (winner[1] === 2) {
+                computerScore++;
+            }
+    
+            setScore(playerScore, computerScore);
+    
+            displayText(winner[0]);
+            console.log(gameOver);
+        }
+
+    });
+});
+
+setScore(playerScore, computerScore);
